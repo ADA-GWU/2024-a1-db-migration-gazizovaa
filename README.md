@@ -68,11 +68,11 @@ INSERT INTO STUDENTS(ST_ID, ST_NAME, ST_LAST) VALUES(3, 'Natavan', 'Mammadova');
 SELECT * FROM STUDENTS;
 ```
 
- st_id | st_name |  st_last
--------+---------+------------
-     1 | Konul   | Gurbanova
-     2 | Shahnur | Isgandarli
-     3 | Natavan | Mammadova
+| st_id| st_name |  st_last
+|------|---------|------------
+|    1 | Konul   | Gurbanova
+|    2 | Shahnur | Isgandarli
+|    3 | Natavan | Mammadova
 (3 rows)
 
 `<!--Create INTERESTS TABLE-->`
@@ -100,17 +100,17 @@ INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(3, 'Chess');
 SELECT * FROM INTERESTS;
 ```
 
- student_id |  interest
-------------+------------
-          1 | Tennis
-          1 | Literature
-          2 | Math
-          2 | Tennis
-          3 | Math
-          3 | Music
-          2 | Football
-          1 | Chemistry
-          3 | Chess
+| student_id |  interest  |
+|-----------+|----------  |
+|          1 | Tennis     |
+|          1 | Literature |
+|          2 | Math       |
+|          2 | Tennis     |
+|          3 | Math       |
+|          3 | Music      |
+|          2 | Football   |
+|          1 | Chemistry  |
+|          3 | Chess      |
 (9 rows)
 
 ### Run Migration Script
@@ -168,11 +168,11 @@ ORDER BY STUDENT_ID;
 SELECT * FROM TEMP_INTERESTS;
 ```
 
- student_id |              interests
-------------+-------------------------------------
-          1 | {"Tennis","Literature","Chemistry"}
-          2 | {"Math","Tennis","Football"}
-          3 | {"Math","Music","Chess"}
+| student_id |              interests              |
+|-----------+|------------------------------------ |
+|          1 | {"Tennis","Literature","Chemistry"} |
+|          2 | {"Math","Tennis","Football"}        |
+|          3 | {"Math","Music","Chess"}            |
 (3 rows)
 
 ```sql
