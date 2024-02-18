@@ -42,7 +42,7 @@ I used the latest version of PostgreSQL, 16.2 to create tables, implement migrat
 **Step 5:** Right click on the database you created, for example "postgres" and select **Query Tool** from drop-down list. Now, you're ready to run the scripts by adding the script files.
 
 
-## Run Scripts from pgAdmin
+## Run Scripts using pgAdmin
 ### Perform Tables
 **Step 1:** To import any SQL script, you will see **Open File** icon positioned above "Query" section and click on it. Navigate to your directory containing the unzipped GitHub repository. Then, select "created_tables.sql" SQL file. 
 
@@ -63,20 +63,21 @@ INSERT INTO STUDENTS(ST_ID, ST_NAME, ST_LAST) VALUES(1, 'Konul', 'Gurbanova');
 INSERT INTO STUDENTS(ST_ID, ST_NAME, ST_LAST) VALUES(2, 'Shahnur', 'Isgandarli');
 INSERT INTO STUDENTS(ST_ID, ST_NAME, ST_LAST) VALUES(3, 'Natavan', 'Mammadova');
 ```
+
 ```sql
 SELECT * FROM STUDENTS;
 ```
 
-```sql
 `<!--Create INTERESTS TABLE-->`
+```sql
 CREATE TABLE INTERESTS(
 	STUDENT_ID INT NOT NULL,
 	INTEREST VARCHAR(20) NOT NULL
 );
 ```
 
-```sql
 `<!--Insert sample data into the INSERTS table-->`
+```sql
 INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Tennis');
 INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Literature');
 INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(2, 'Math');
@@ -87,7 +88,168 @@ INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(2, 'Football');
 INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Chemistry');
 INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(3, 'Chess');
 ```
+
 ```sql
 SELECT * FROM INTERESTS;
-``` 
+```
+
+### Run Migration Script
+**Step 1:** To import any SQL script, you will see **Open File** icon positioned above "Query" section and click on it. Navigate to your directory containing the unzipped GitHub repository. Then, select "migration_script.sql" SQL file. 
+
+**Step 2:** Start running the scripts sequentially, beginning from top to down.
+
+`<!--Rename the STUDENTS.ST_ID to STUDENTS.STUDENT_ID-->`
+```sql
+ALTER TABLE STUDENTS
+RENAME COLUMN ST_ID TO STUDENT_ID;
+```
+
+```sql
+SELECT * FROM STUDENTS;
+```
+
+`<!--Change the length of STUDENTS.ST_NAME from 20 to 30-->`
+```sql
+ALTER TABLE STUDENTS
+ALTER COLUMN ST_NAME TYPE VARCHAR(30);
+```
+
+`<!--Change the length of STUDENTS.ST_LAST from 20 to 30-->`
+```sql
+ALTER TABLE STUDENTS
+ALTER COLUMN ST_LAST TYPE VARCHAR(30);
+```
+
+```sql
+SELECT * FROM STUDENTS;
+```
+
+`<!--Change the name of the INTERESTS.INTEREST to INTERESTS-->`
+```sql
+ALTER TABLE INTERESTS
+RENAME COLUMN INTEREST TO INTERESTS;
+```
+
+```sql
+SELECT * FROM INTERESTS;
+```
+
+`<!--Create new table with an array type that stores the INTERESTS table-->`
+```sql
+CREATE TABLE TEMP_INTERESTS AS
+SELECT STUDENT_ID,
+       CONCAT('{', STRING_AGG(CONCAT('"', INTERESTS, '"'), ','), '}') AS INTERESTS
+FROM INTERESTS
+GROUP BY STUDENT_ID
+ORDER BY STUDENT_ID;
+```
+
+```sql
+SELECT * FROM TEMP_INTERESTS;
+```
+
+`<!--Drop the old table-->`
+```sql
+DROP TABLE INTERESTS;
+```
+
+`<!--Replace the TEMP_INTERESTS table with the INTERESTS table-->`
+```sql
+ALTER TABLE TEMP_INTERESTS
+RENAME TO INTERESTS;
+```
+
+```sql
+SELECT * FROM INTERESTS;
+```
+
+### Run Rollback Script
+**Step 1:** To import any SQL script, you will see **Open File** icon positioned above "Query" section and click on it. Navigate to your directory containing the unzipped GitHub repository. Then, select "rollback_script.sql" SQL file. 
+
+**Step 2:** Start running the scripts sequentially, beginning from top to down.
+
+`<!-- Rename back the STUDENTS.STUDENT_ID to STUDENTS.ST_ID-->`
+```sql
+ALTER TABLE STUDENTS
+RENAME COLUMN STUDENT_ID TO ST_ID;
+```
+
+```sql
+SELECT * FROM STUDENTS;
+```
+
+`<!--Revert the change in the lenght of STUDENTS.ST_NAME from 30 to 20-->`
+```sql
+ALTER TABLE STUDENTS
+ALTER COLUMN ST_NAME TYPE VARCHAR(20);
+```
+
+`<!--Revert the change in the lenght of STUDENTS.ST_LAST from 30 to 20-->`
+```sql
+ALTER TABLE STUDENTS
+ALTER COLUMN ST_LAST TYPE VARCHAR(20);
+```
+
+```sql
+SELECT * FROM STUDENTS;
+```
+
+`<!--Revert the name of the INTERESTS.INTERESTS to INTEREST-->
+```sql
+ALTER TABLE INTERESTS
+RENAME COLUMN INTERESTS TO INTEREST;
+```
+
+```sql
+SELECT * FROM INTERESTS;
+```
+
+`<!--Drop the previous version of INTERESTS table-->`
+```sql
+DROP TABLE INTERESTS;
+```
+
+`<!--Recreate the dropped INTERESTS table-->~
+```sql
+CREATE TABLE INTERESTS( 
+	STUDENT_ID INT NOT NULL,
+	INTEREST VARCHAR(20) NOT NULL
+);
+```
+
+`<!--Re-insert the sample data into INTERESTS table-->`
+```sql
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Tennis');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Literature');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(2, 'Math');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(2, 'Tennis');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(3, 'Math');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(3, 'Music');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(2, 'Football');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(1, 'Chemistry');
+INSERT INTO INTERESTS(STUDENT_ID, INTEREST) VALUES(3, 'Chess');
+```
+
+```sql
+SELECT * FROM INTERESTS;
+```
+
+## (Another Option)/Run Scripts using SQL Shell (psql)
+**Step 1:** When entering SQL Shell, type the following details:
+Server [localhost]: localhost
+Database [postgres]: # enter your database name (in my case, it's "postgres")
+Port [5432]: 5432
+Username [postgres]: # enter your username (in my case, it's "postgres")
+Password for user postgres: # enter your password
+
+**Step 2:** Once you have connected to a PostgreSQL, you just need to start copying the SQL scripts sequentially(first created_tables.sql, second migration_script.sql, last rollback_script.sql) to the terminal and press **Enter**.
+
+
+       
+
+       
+
+
+
+
 
